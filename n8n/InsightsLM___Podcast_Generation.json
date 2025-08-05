@@ -93,7 +93,7 @@
     },
     {
       "parameters": {
-        "content": "## To Do \n- REQUIREMENT: FFMPEG needs to be installed on your server for this workflow to succeed\n- Configure the Supabase nodes to reference your Project\n- Configure your Google Cloud API credentials\n- Update the Host of the \"HTTP Requests\" to hit your project",
+        "content": "## To Do \n- REQUIREMENT: FFMPEG needs to be installed on your server for this workflow to succeed\n- Configure the Supabase nodes to reference your Project\n- Configure your Google Cloud API credentials\n- Update the Host of the \"HTTP Requests\" to hit your project\n- Set up Groq API credentials",
         "width": 680,
         "color": 4
       },
@@ -201,44 +201,36 @@
     },
     {
       "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.prompt }}",
-        "batching": {}
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "groqApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-8b-instant\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.prompt) }}\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 4000\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
       },
-      "type": "@n8n/n8n-nodes-langchain.chainLlm",
-      "typeVersion": 1.7,
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [
         1100,
         1180
       ],
       "id": "25ae0627-f92b-4fa3-8722-6ce6cb678697",
-      "name": "Basic LLM Chain",
+      "name": "Generate Podcast Script",
       "retryOnFail": true,
       "waitBetweenTries": 5000,
-      "maxTries": 5
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "gpt-4.1",
-          "mode": "list",
-          "cachedResultName": "gpt-4.1"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        1100,
-        1400
-      ],
-      "id": "a805fc31-c265-49cc-8a95-e79ec7311783",
-      "name": "OpenAI Chat Model",
+      "maxTries": 5,
       "credentials": {
-        "openAiApi": {
+        "groqApi": {
           "id": "hNalDChhNUDtYG7T",
-          "name": "OpenAi account"
+          "name": "Groq account"
         }
       }
     },
@@ -250,7 +242,7 @@
         "nodeCredentialType": "googlePalmApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [{\n    \"parts\":[{\n      \"text\": {{ JSON.stringify($json.text) }}\n    }]\n  }],\n  \"generationConfig\": {\n    \"responseModalities\": [\"AUDIO\"],\n    \"speechConfig\": {\n      \"multiSpeakerVoiceConfig\": {\n        \"speakerVoiceConfigs\": [{\n            \"speaker\": \"Joe\",\n            \"voiceConfig\": {\n              \"prebuiltVoiceConfig\": {\n                \"voiceName\": \"Algenib\"\n              }\n            }\n          }, {\n            \"speaker\": \"Jane\",\n            \"voiceConfig\": {\n              \"prebuiltVoiceConfig\": {\n                \"voiceName\": \"Kore\"\n              }\n            }\n          }]\n      }\n    }\n  },\n  \"model\": \"gemini-2.5-flash-preview-tts\"\n}",
+        "jsonBody": "={\n  \"contents\": [{\n    \"parts\":[{\n      \"text\": {{ JSON.stringify($json.body.choices[0].message.content) }}\n    }]\n  }],\n  \"generationConfig\": {\n    \"responseModalities\": [\"AUDIO\"],\n    \"speechConfig\": {\n      \"multiSpeakerVoiceConfig\": {\n        \"speakerVoiceConfigs\": [{\n            \"speaker\": \"Joe\",\n            \"voiceConfig\": {\n              \"prebuiltVoiceConfig\": {\n                \"voiceName\": \"Algenib\"\n              }\n            }\n          }, {\n            \"speaker\": \"Jane\",\n            \"voiceConfig\": {\n              \"prebuiltVoiceConfig\": {\n                \"voiceName\": \"Kore\"\n              }\n            }\n          }]\n      }\n    }\n  },\n  \"model\": \"gemini-2.5-flash-preview-tts\"\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -457,7 +449,7 @@
     },
     {
       "parameters": {
-        "content": "[![The AI Automators](https://www.theaiautomators.com/wp-content/uploads/2025/03/gray-logo.png)](https://www.theaiautomators.com/)\n## InsightsLM\nhttps://github.com/theaiautomators/insights-lm-public",
+        "content": "[![The AI Automators](https://www.theaiautomators.com/wp-content/uploads/2025/03/gray-logo.png)](https://www.theaiautomators.com/)\n## InsightsLM (Groq Version)\nhttps://github.com/theaiautomators/insights-lm-public",
         "height": 220,
         "width": 280,
         "color": 7
@@ -551,30 +543,19 @@
       "main": [
         [
           {
-            "node": "Basic LLM Chain",
+            "node": "Generate Podcast Script",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Basic LLM Chain": {
+    "Generate Podcast Script": {
       "main": [
         [
           {
             "node": "Generate Audio",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Basic LLM Chain",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]

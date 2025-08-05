@@ -167,22 +167,45 @@
     },
     {
       "parameters": {
-        "resource": "audio",
-        "operation": "transcribe",
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "groqApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "parameterType": "formData",
+              "name": "model",
+              "value": "distil-whisper-large-v3-en"
+            },
+            {
+              "parameterType": "formData",
+              "name": "response_format",
+              "value": "json"
+            }
+          ]
+        },
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 1.8,
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [
         940,
         180
       ],
       "id": "e8c24cd1-0d5e-452e-97ef-cb997a9c603e",
-      "name": "OpenAI",
+      "name": "Groq Audio Transcription",
       "credentials": {
-        "openAiApi": {
+        "groqApi": {
           "id": "hNalDChhNUDtYG7T",
-          "name": "OpenAi account"
+          "name": "Groq account"
         }
       }
     },
@@ -234,7 +257,7 @@
     },
     {
       "parameters": {
-        "content": "## To Do \n- Configure the Supabase nodes to reference your Project\n- Update the Host of the \"HTTP Requests\" to hit your project\n- Setup OpenAI credentials",
+        "content": "## To Do \n- Configure the Supabase nodes to reference your Project\n- Update the Host of the \"HTTP Requests\" to hit your project\n- Setup Groq credentials",
         "width": 680,
         "color": 4
       },
@@ -249,7 +272,7 @@
     },
     {
       "parameters": {
-        "content": "[![The AI Automators](https://www.theaiautomators.com/wp-content/uploads/2025/03/gray-logo.png)](https://www.theaiautomators.com/)\n## InsightsLM\nhttps://github.com/theaiautomators/insights-lm-public",
+        "content": "[![The AI Automators](https://www.theaiautomators.com/wp-content/uploads/2025/03/gray-logo.png)](https://www.theaiautomators.com/)\n## InsightsLM (Groq Version)\nhttps://github.com/theaiautomators/insights-lm-public",
         "height": 220,
         "width": 280,
         "color": 7
@@ -299,7 +322,7 @@
         ],
         [
           {
-            "node": "OpenAI",
+            "node": "Groq Audio Transcription",
             "type": "main",
             "index": 0
           }
@@ -335,7 +358,7 @@
         ]
       ]
     },
-    "OpenAI": {
+    "Groq Audio Transcription": {
       "main": [
         [
           {

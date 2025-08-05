@@ -1,5 +1,5 @@
 {
-  "name": "Import Insights LM Workflows",
+  "name": "Import Insights LM Workflows (Groq Edition)",
   "nodes": [
     {
       "parameters": {
@@ -67,7 +67,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over each input item passed to this node\nfor (const item of $input.all()) {\n  // Convert the JSON object of the current item into a string\n  let dataString = JSON.stringify(item.json);\n\n  // Perform the find-and-replace operations on the string version of the JSON.\n  // The 'g' flag in the regular expression ensures all instances are replaced.\n  const updatedString = dataString\n    .replace(/39evQ95L86jhtb3I/g, $('Enter User Values').first().json['Enter the n8n Custom Webhook Header Auth ID'])\n    .replace(/yfvmutoxmibqzvyklggr/g, $('Enter User Values').first().json['Enter Supabase Project ID'])\n    .replace(/OeYUddl4OaIohMCC/g, $('Enter User Values').first().json['Enter your n8n Supabase Credential ID'])\n    .replace(/hNalDChhNUDtYG7T/g, $('Enter User Values').first().json['Enter the n8n OpenAI Credential ID'])\n    .replace(/PzC8XiX0nzmyH9AA/g, $('Enter User Values').first().json['Enter the n8n Google Gemini (PaLM) Credential ID'])\n    .replace(/OuPBM6n0hyobX8h6/g, $('Enter User Values').first().json['Enter the n8n Postgres Credential ID']);\n\n  // Convert the modified string back into a JSON object and\n  // overwrite the original JSON data of the item.\n  item.json = JSON.parse(updatedString);\n}\n\n// Return all the modified items to be passed to the next node in the workflow.\nreturn $input.all();"
+        "jsCode": "// Loop over each input item passed to this node\nfor (const item of $input.all()) {\n  // Convert the JSON object of the current item into a string\n  let dataString = JSON.stringify(item.json);\n\n  // Perform the find-and-replace operations on the string version of the JSON.\n  // The 'g' flag in the regular expression ensures all instances are replaced.\n  const updatedString = dataString\n    .replace(/39evQ95L86jhtb3I/g, $('Enter User Values').first().json['Enter the n8n Custom Webhook Header Auth ID'])\n    .replace(/yfvmutoxmibqzvyklggr/g, $('Enter User Values').first().json['Enter Supabase Project ID'])\n    .replace(/OeYUddl4OaIohMCC/g, $('Enter User Values').first().json['Enter your n8n Supabase Credential ID'])\n    .replace(/hNalDChhNUDtYG7T/g, $('Enter User Values').first().json['Enter the n8n Groq Credential ID'])\n    .replace(/PzC8XiX0nzmyH9AA/g, $('Enter User Values').first().json['Enter the n8n Google Gemini (PaLM) Credential ID'])\n    .replace(/OuPBM6n0hyobX8h6/g, $('Enter User Values').first().json['Enter the n8n Postgres Credential ID'])\n    // Replace OpenAI-specific node types with Groq HTTP requests\n    .replace(/\"@n8n\\/n8n-nodes-langchain\\.lmChatOpenAi\"/g, '\"n8n-nodes-base.httpRequest\"')\n    .replace(/\"@n8n\\/n8n-nodes-langchain\\.embeddingsOpenAi\"/g, '\"n8n-nodes-base.httpRequest\"')\n    .replace(/\"@n8n\\/n8n-nodes-langchain\\.openAi\"/g, '\"n8n-nodes-base.httpRequest\"')\n    // Replace OpenAI models with Groq models\n    .replace(/\"gpt-4\\.1-mini\"/g, '\"llama-3.1-8b-instant\"')\n    .replace(/\"gpt-4\\.1\"/g, '\"llama-3.1-8b-instant\"')\n    .replace(/\"o3\"/g, '\"llama-3.1-8b-instant\"')\n    // Update API endpoints\n    .replace(/\"text-embedding-ada-002\"/g, '\"nomic-embed-text-v1.5\"');\n\n  // Convert the modified string back into a JSON object and\n  // overwrite the original JSON data of the item.\n  item.json = JSON.parse(updatedString);\n}\n\n// Return all the modified items to be passed to the next node in the workflow.\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -249,7 +249,7 @@
             },
             {
               "id": "de05aeff-fa19-4da9-b37d-db62cf8c8b20",
-              "name": "Enter the n8n OpenAI Credential ID",
+              "name": "Enter the n8n Groq Credential ID",
               "value": "",
               "type": "string"
             },
@@ -281,11 +281,11 @@
         420
       ],
       "id": "16d38df6-a164-4a33-9237-43a36a6da4c7",
-      "name": "When clicking ‘Execute workflow’"
+      "name": "When clicking 'Execute workflow'"
     },
     {
       "parameters": {
-        "content": "## UPDATE - Add Values\nYou need to fill out all fields here before running this workflow",
+        "content": "## UPDATE - Add Values\nYou need to fill out all fields here before running this workflow\n\n⚠️ NOTE: This version uses Groq instead of OpenAI",
         "height": 340,
         "width": 280,
         "color": 6
@@ -377,7 +377,7 @@
             },
             {
               "id": "aeca18f7-7dd0-4bf2-8181-a1e63725e8d6",
-              "leftValue": "={{ $json[\"Enter the n8n OpenAI Credential ID\"] }}",
+              "leftValue": "={{ $json[\"Enter the n8n Groq Credential ID\"] }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -411,7 +411,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// This script generates a single, structured output item.\n\n// Use a template literal (backticks) for the multi-line start message.\nconst start_message = `Success. Your n8n Workflows have been set up.\nThe following are the Secrets that need to be created in Supabase`;\n\n// Define the array of secret objects.\n// A placeholder is used for secrets that need a user-defined value.\nconst secrets_to_create = [\n  {\n    \"Key\": \"AUDIO_GENERATION_WEBHOOK_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/4c4699bc-004b-4ca3-8923-373ddd4a274e\"\n  },\n  {\n    \"Key\": \"NOTEBOOK_CHAT_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/2fabf43f-6e6e-424b-8e93-9150e9ce7d6c\"\n  },\n  {\n    \"Key\": \"ADDITIONAL_SOURCES_WEBHOOK_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/670882ea-5c1e-4b50-9f41-4792256af985\"\n  },\n  {\n    \"Key\": \"DOCUMENT_PROCESSING_WEBHOOK_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/19566c6c-e0a5-4a8f-ba1a-5203c2b663b7\"\n  },\n  {\n    \"Key\": \"NOTEBOOK_GENERATION_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/0c488f50-8d6a-48a0-b056-5f7cfca9efe2\"\n  },\n  {\n    \"Key\": \"NOTEBOOK_GENERATION_AUTH\",\n    \"Value\": \"Provide the password you created earlier\"\n  },\n  {\n    \"Key\": \"OPENAI_API_KEY\",\n    \"Value\": \"Provide your OpenAI Key\"\n  }\n];\n\nconst end_message = 'Ensure you have FFMPEG installed on this server for the Podcast audio generation to work';\n\n// Return the final payload in the required n8n format (an array of items).\nreturn [\n  {\n    json: {\n      start_message: start_message,\n      supabase_secrets: secrets_to_create,\n      end_message: end_message\n    }\n  }\n];"
+        "jsCode": "// This script generates a single, structured output item.\n\n// Use a template literal (backticks) for the multi-line start message.\nconst start_message = `Success. Your n8n Workflows have been set up with Groq Cloud.\nThe following are the Secrets that need to be created in Supabase`;\n\n// Define the array of secret objects.\n// A placeholder is used for secrets that need a user-defined value.\nconst secrets_to_create = [\n  {\n    \"Key\": \"AUDIO_GENERATION_WEBHOOK_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/4c4699bc-004b-4ca3-8923-373ddd4a274e\"\n  },\n  {\n    \"Key\": \"NOTEBOOK_CHAT_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/2fabf43f-6e6e-424b-8e93-9150e9ce7d6c\"\n  },\n  {\n    \"Key\": \"ADDITIONAL_SOURCES_WEBHOOK_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/670882ea-5c1e-4b50-9f41-4792256af985\"\n  },\n  {\n    \"Key\": \"DOCUMENT_PROCESSING_WEBHOOK_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/19566c6c-e0a5-4a8f-ba1a-5203c2b663b7\"\n  },\n  {\n    \"Key\": \"NOTEBOOK_GENERATION_URL\",\n    \"Value\": $('Enter User Values').first().json[\"Enter your n8n Base URL (The part before the first single slash)\"] + \"/webhook/0c488f50-8d6a-48a0-b056-5f7cfca9efe2\"\n  },\n  {\n    \"Key\": \"NOTEBOOK_GENERATION_AUTH\",\n    \"Value\": \"Provide the password you created earlier\"\n  },\n  {\n    \"Key\": \"GROQ_API_KEY\",\n    \"Value\": \"Provide your Groq API Key from console.groq.com\"\n  }\n];\n\nconst end_message = 'Ensure you have FFMPEG installed on this server for the Podcast audio generation to work. All workflows now use Groq llama-3.1-8b-instant for faster inference.';\n\n// Return the final payload in the required n8n format (an array of items).\nreturn [\n  {\n    json: {\n      start_message: start_message,\n      supabase_secrets: secrets_to_create,\n      end_message: end_message\n    }\n  }\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -424,7 +424,7 @@
     },
     {
       "parameters": {
-        "content": "# Import Insights LM Workflows\n- Only run this workflow once to avoid having duplicate workflows in your project.\n- If you do create duplicate workflows, you can archive them in your instance\n- https://github.com/theaiautomators/insights-lm-public",
+        "content": "# Import Insights LM Workflows (Groq Edition)\n- Only run this workflow once to avoid having duplicate workflows in your project.\n- If you do create duplicate workflows, you can archive them in your instance\n- https://github.com/theaiautomators/insights-lm-public\n- 🚀 Modified to use Groq Cloud llama-3.1-8b-instant instead of OpenAI for faster inference",
         "width": 680,
         "color": 6
       },
@@ -439,7 +439,7 @@
     },
     {
       "parameters": {
-        "content": "## READ OUTPUT AFTER SUCCESSFUL EXECUTION\nI output the various Supabase secrets that you need to create in this node",
+        "content": "## READ OUTPUT AFTER SUCCESSFUL EXECUTION\nI output the various Supabase secrets that you need to create in this node\n\n✅ All workflows configured for Groq llama-3.1-8b-instant",
         "height": 340,
         "width": 340,
         "color": 6
@@ -609,7 +609,7 @@
         ]
       ]
     },
-    "When clicking ‘Execute workflow’": {
+    "When clicking 'Execute workflow'": {
       "main": [
         [
           {
